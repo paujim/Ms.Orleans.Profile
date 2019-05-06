@@ -1,11 +1,11 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Orleans;
 using Orleans.Configuration;
 using Orleans.Hosting;
 using System;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace Profile.Silo
@@ -13,51 +13,60 @@ namespace Profile.Silo
 
     class Program
     {
+
         private static Task Main(string[] args)
         {
-
             Console.Title = nameof(Silo);
+
+            var config = new ConfigurationBuilder()
+             .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+             .AddEnvironmentVariables()
+             .Build();
+
+            var siloConfig = config.GetSection("SiloConfig").Get<SiloConfig>();
 
             return new HostBuilder()
                 .UseOrleans(builder => builder
                 // Clustering information
                 .Configure<ClusterOptions>(options =>
                 {
-                    options.ClusterId = "cluster-id";
-                    options.ServiceId = "service=id";
+                    options.ClusterId = siloConfig.ClusterId;
+                    options.ServiceId = siloConfig.ServiceId;
                 })
                 // Clustering provider
                 .UseDynamoDBClustering(options =>
                 {
-                    options.AccessKey = "MY_ACCESS_KEY";
-                    options.SecretKey = "MY_SECRET_KEY";
-                    options.Service = "us-wes-1";
-                    options.TableName = "OrleansSilos";
+                    options.AccessKey = siloConfig.AwsAccessKey;
+                    options.SecretKey = siloConfig.AwsSecretKey;
+                    options.Service = siloConfig.AwsRegion;
+                    options.TableName = siloConfig.AwsClusterTableName;
                 })
                 // Endpoints
-                .Configure<EndpointOptions>(options =>
-                {
-                    // Port to use for Silo-to-Silo
-                    options.SiloPort = 11111;
-                    // Port to use for the gateway
-                    options.GatewayPort = 30000;
-                    // IP Address to advertise in the cluster
-                    options.AdvertisedIPAddress = IPAddress.Parse("172.16.0.42");
-                    // The socket used for silo-to-silo will bind to this endpoint
-                    options.GatewayListeningEndpoint = new IPEndPoint(IPAddress.Any, 40000);
-                    // The socket used by the gateway will bind to this endpoint
-                    options.SiloListeningEndpoint = new IPEndPoint(IPAddress.Any, 50000);
-                })
-                .AddDynamoDBGrainStorage("DDBStore", options =>
-                {
-                    options.AccessKey = "MY_ACCESS_KEY";
-                    options.SecretKey = "MY_SECRET_KEY";
-                    options.Service = "us-wes-1";
-                    options.TableName = "OrleansGrainState";
-                })
+                .ConfigureEndpoints(siloPort: siloConfig.SiloPort, gatewayPort: siloConfig.GatewayPort)
+                //.Configure<EndpointOptions>(options =>
+                //{
+                //    // Port to use for Silo-to-Silo
+                //    options.SiloPort = 11111;
+                //    // Port to use for the gateway
+                //    options.GatewayPort = 30000;
+                //    // IP Address to advertise in the cluster
+                //    options.AdvertisedIPAddress = IPAddress.Parse("172.16.0.42");
+                //    // The socket used for silo-to-silo will bind to this endpoint
+                //    options.GatewayListeningEndpoint = new IPEndPoint(IPAddress.Any, 40000);
+                //    // The socket used by the gateway will bind to this endpoint
+                //    options.SiloListeningEndpoint = new IPEndPoint(IPAddress.Any, 50000);
+                //})
+                //.AddDynamoDBGrainStorage("DDBStore", options =>
+                //{
+                //    options.AccessKey = "MY_ACCESS_KEY";
+                //    options.SecretKey = "MY_SECRET_KEY";
+                //    options.Service = "us-wes-1";
+                //    options.TableName = "OrleansGrainState";
+                //})
                 //.ConfigureApplicationParts(_ => _.AddApplicationPart(typeof(Gain).Assembly).WithReferences())
                 .AddMemoryGrainStorageAsDefault()
-                //.AddMemoryGrainStorage("PubSubStore")
+                .AddMemoryGrainStorage("PubSubStore")
                 .UseDashboard())
                 .ConfigureServices(services =>
                 {
