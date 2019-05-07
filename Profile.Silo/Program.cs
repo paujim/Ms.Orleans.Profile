@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Orleans;
 using Orleans.Configuration;
 using Orleans.Hosting;
+using Profile.Core;
 using System;
 using System.Threading.Tasks;
 
@@ -31,8 +32,8 @@ namespace Profile.Silo
                 // Clustering information
                 .Configure<ClusterOptions>(options =>
                 {
-                    options.ClusterId = siloConfig.ClusterId;
-                    options.ServiceId = siloConfig.ServiceId;
+                    options.ClusterId = OrleansConstants.ClusterId;
+                    options.ServiceId = OrleansConstants.ServiceId;
                 })
                 // Clustering provider
                 .UseDynamoDBClustering(options =>
@@ -57,17 +58,17 @@ namespace Profile.Silo
                 //    // The socket used by the gateway will bind to this endpoint
                 //    options.SiloListeningEndpoint = new IPEndPoint(IPAddress.Any, 50000);
                 //})
-                //.AddDynamoDBGrainStorage("DDBStore", options =>
-                //{
-                //    options.AccessKey = "MY_ACCESS_KEY";
-                //    options.SecretKey = "MY_SECRET_KEY";
-                //    options.Service = "us-wes-1";
-                //    options.TableName = "OrleansGrainState";
-                //})
+                .AddDynamoDBGrainStorage(OrleansConstants.GrainPersistenceStorage, options =>
+                {
+                    options.AccessKey = siloConfig.AwsAccessKey;
+                    options.SecretKey = siloConfig.AwsSecretKey;
+                    options.Service = siloConfig.AwsRegion;
+                    options.TableName = siloConfig.AwsStorageTableName;
+                })
                 //.ConfigureApplicationParts(_ => _.AddApplicationPart(typeof(Gain).Assembly).WithReferences())
                 .AddMemoryGrainStorageAsDefault()
-                .AddMemoryGrainStorage("PubSubStore")
-                .UseDashboard())
+                .AddMemoryGrainStorage(OrleansConstants.GrainMemoryStorage)
+                .UseDashboard( ))
                 .ConfigureServices(services =>
                 {
                     //services.AddHostedService<StocksHostedService>();

@@ -16,8 +16,6 @@ namespace Profile.Silo
         public string AwsSecretKey { get; set; }
         public string AwsRegion { get; set; }
         public string AwsClusterTableName { get; set; }
-
-        public string ClusterId => "cluster-id";
-        public string ServiceId => "service=id";
+        public string AwsStorageTableName { get; set; }
     }
 }
