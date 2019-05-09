@@ -1,13 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Profile.Silo
+﻿namespace Profile.Core
 {
-    /// <summary>
-    /// Contains properties utilized for configuration Orleans
-    /// Clients and Cluster Nodes.
-    /// </summary>
     public class SiloConfig
     {
         public int GatewayPort { get; set; }

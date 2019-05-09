@@ -2,3 +2,10 @@
 Profile.Silo/bin/
 Profile.Silo/obj/
 Profile.Core/obj/
+Profile.Client/bin/
+Profile.Client/obj/
+Profile.Core/bin/
+Profile.Grains/obj/
+Profile.Interface/bin/
+Profile.Interface/obj/
+Profile.Grains/bin/

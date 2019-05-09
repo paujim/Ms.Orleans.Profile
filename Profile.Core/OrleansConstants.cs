@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Profile.Core
+﻿namespace Profile.Core
 {
     public static class OrleansConstants
     {
@@ -10,5 +8,4 @@ namespace Profile.Core
         public const string GrainMemoryStorage = "MemoryStore";
         public const string PubSubStore = "PubSubStore";
     }
-
 }
