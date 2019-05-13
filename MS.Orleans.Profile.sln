@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Profile.Interface", "Profil
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Profile.Grains", "Profile.Grains\Profile.Grains.csproj", "{C1CE0645-1BC0-49B2-B5F5-1629DAB13619}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Profile.Client", "Profile.Client\Profile.Client.csproj", "{8C17EA1B-EEFD-435D-BADC-6C85D7A13342}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Profile.Client", "Profile.Client\Profile.Client.csproj", "{8C17EA1B-EEFD-435D-BADC-6C85D7A13342}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

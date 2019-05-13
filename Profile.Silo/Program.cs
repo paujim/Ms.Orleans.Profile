@@ -6,6 +6,7 @@ using Orleans;
 using Orleans.Configuration;
 using Orleans.Hosting;
 using Profile.Core;
+using Profile.Grains;
 using System;
 using System.Threading.Tasks;
 
@@ -65,7 +66,7 @@ namespace Profile.Silo
                     options.Service = siloConfig.AwsRegion;
                     options.TableName = siloConfig.AwsStorageTableName;
                 })
-                //.ConfigureApplicationParts(_ => _.AddApplicationPart(typeof(Gain).Assembly).WithReferences())
+                .ConfigureApplicationParts(_ => _.AddApplicationPart(typeof(CustomerGrain).Assembly).WithReferences())
                 .AddMemoryGrainStorageAsDefault()
                 .AddMemoryGrainStorage(OrleansConstants.GrainMemoryStorage)
                 .UseDashboard( ))
