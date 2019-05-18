@@ -1,13 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Profile.Core.Data
 {
-    interface IIndexRegistry
+    public interface IIndexRegistry
     {
         Task Initialize();
-        Task Upsert(string indexType, string property, Guid objectId);
-        Task Remove(string indexType, string property);
-        Task<Guid> ReadObject(string indexType, string property);
+        Task Upsert(Type indexType, Guid objectId, string property);
+        Task Remove(Type indexType, Guid objectId, string property);
+        Task<IEnumerable<Guid>> SearchBy(Type indexType, string property);
     }
 }

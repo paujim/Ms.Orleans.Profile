@@ -7,6 +7,7 @@ namespace Profile.Interface
     {
         Task<T> GetItem();
         Task<T> SetItem(T obj);
+        Task Clear();
     }
 
 }

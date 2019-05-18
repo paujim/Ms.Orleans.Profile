@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Orleans;
 using Orleans.Configuration;
 using Orleans.Hosting;
+using Orleans.Serialization;
 using Profile.Core;
 using Profile.Core.Models;
 using Profile.Interface;
@@ -15,6 +16,7 @@ namespace Profile.Client
     {
         static async Task<int> Main(string[] args)
         {
+            Console.Title = "Test Client";
             try
             {
                 var siloConfig = new ConfigurationBuilder()
@@ -23,13 +25,16 @@ namespace Profile.Client
                     .Build()
                     .GetSection("SiloConfig").Get<SiloConfig>();
 
-
                 // Configure a client and connect to the service.
                 var client = new ClientBuilder()
                     .Configure<ClusterOptions>(options =>
                     {
                         options.ClusterId = OrleansConstants.ClusterId;
                         options.ServiceId = OrleansConstants.ServiceId;
+                    })
+                    .Configure<SerializationProviderOptions>(options =>
+                    {
+                        options.SerializationProviders.Add(typeof(ProtobufSerializer));
                     })
                     // Clustering provider
                     .UseDynamoDBClustering(options =>
@@ -45,13 +50,36 @@ namespace Profile.Client
                 await client.Connect(CreateRetryFilter());
                 Console.WriteLine("Client successfully connect to silo host");
 
-                // Create new grain
-                var grainKey = Guid.NewGuid();
-                var customerGrain = client.GetGrain<ICustomerGrain>(grainKey);
-                var customer = new Customer("name", "lastName", "phone");
-                await customerGrain.SetItem(customer);
-                //var response = await friend.SayHello("Good morning, my friend!");
-                //Console.WriteLine("\n\n{0}\n\n", response);
+                var bussinessMgnt = client.GetGrain<IBussinessMgntService>(0L);
+                var id = await bussinessMgnt.Create(new Bussiness("A006843400", RandomUtils.GenerateString(10), "9864322148")
+                {
+                    Address = new Address()
+                    {
+                        CountryCode = "AU",
+                        City = "Melbourne",
+                        Line1 = "Address line",
+                        State = "VIC",
+                        PostalCode = "3000"
+                    }
+                });
+
+                var grainId = await bussinessMgnt.Create(new Bussiness("B006843400", RandomUtils.GenerateString(10), "9864322148")
+                {
+                    Address = new Address()
+                    {
+                        CountryCode = "AU",
+                        City = "Melbourne",
+                        Line1 = "Address line",
+                        State = "VIC",
+                        PostalCode = "3000"
+                    }
+                });
+
+                var arrayBussiness = await bussinessMgnt.SearchByProperty("9864322148");
+
+                await bussinessMgnt.Delete(id);
+
+                arrayBussiness = await bussinessMgnt.SearchByProperty("9864322148");
 
                 Console.ReadKey();
                 return 0;
@@ -59,7 +87,6 @@ namespace Profile.Client
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                Console.ReadKey();
                 return 1;
             }
         }

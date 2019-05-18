@@ -7,42 +7,43 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Profile.Grains
+namespace Profile.Grains.Services
 {
     [StatelessWorker]
-    public class CustomerMgntService : Grain, ICustomerMgntService
+    public class BussinessMgntService : Grain, IBussinessMgntService
     {
         private IIndexRegistry indexRegistry;
 
-        public CustomerMgntService(IIndexRegistry indexRegistry)
+        public BussinessMgntService(IIndexRegistry indexRegistry)
         {
             this.indexRegistry = indexRegistry;
         }
 
-        public async Task<Guid> Create(Customer obj)
+        public async Task<Guid> Create(Bussiness obj)
         {
             var id = Guid.NewGuid();
-            var grain = GrainFactory.GetGrain<ICustomerGrain>(id);
+            var grain = GrainFactory.GetGrain<IBussinessGrain>(id);
             await grain.SetItem(obj);
             return id;
         }
 
         public async Task Delete(Guid id)
         {
-            var grain = GrainFactory.GetGrain<ICustomerGrain>(id);
+            var grain = GrainFactory.GetGrain<IBussinessGrain>(id);
             await grain.Clear();
             return;
         }
 
-        public async Task<Customer> GetById(Guid id)
+        public async Task<Bussiness> GetById(Guid id)
         {
-            var grain = GrainFactory.GetGrain<ICustomerGrain>(id);
+            var grain = GrainFactory.GetGrain<IBussinessGrain>(id);
             return await grain.GetItem();
         }
 
         public Task<IEnumerable<Guid>> SearchByProperty(string property)
         {
-            return indexRegistry.SearchBy(typeof(Customer), property);
+            return indexRegistry.SearchBy(typeof(Bussiness), property);
         }
     }
+
 }
