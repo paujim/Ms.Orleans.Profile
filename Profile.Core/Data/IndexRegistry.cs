@@ -13,13 +13,12 @@ namespace Profile.Core.Data
         private DynamoDBIndexRegistryOptions options;
         private DynamoDBWrapper storage;
 
+        protected IndexRegistry() : this(null, null) { }
         public IndexRegistry(ILoggerFactory loggerFactory, IOptions<DynamoDBIndexRegistryOptions> options)
         {
             this.loggerFactory = loggerFactory;
             logger = loggerFactory?.CreateLogger<IndexRegistry>();
-            this.options = options.Value;
-
-            Initialize().Wait();
+            this.options = options?.Value;
         }
         public Task Initialize()
         {

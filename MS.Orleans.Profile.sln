@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Profile.Grains", "Profile.G
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Profile.Client", "Profile.Client\Profile.Client.csproj", "{8C17EA1B-EEFD-435D-BADC-6C85D7A13342}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Profile.Test", "Profile.Test\Profile.Test.csproj", "{95FC396D-CA18-4B3D-AA46-B73C22259B76}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{8C17EA1B-EEFD-435D-BADC-6C85D7A13342}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8C17EA1B-EEFD-435D-BADC-6C85D7A13342}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8C17EA1B-EEFD-435D-BADC-6C85D7A13342}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95FC396D-CA18-4B3D-AA46-B73C22259B76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95FC396D-CA18-4B3D-AA46-B73C22259B76}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95FC396D-CA18-4B3D-AA46-B73C22259B76}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95FC396D-CA18-4B3D-AA46-B73C22259B76}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

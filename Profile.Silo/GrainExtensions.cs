@@ -1,35 +1,43 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
+using Orleans;
 using Orleans.Hosting;
+using Orleans.Runtime;
 using Profile.Core.Data;
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Profile.Silo
 {
     public static class GrainExtensions
     {
-        public static IHostBuilder UseGrainRegistry(this IHostBuilder builder, Action<DynamoDBIndexRegistryOptions> configureOptions)
+        public static ISiloBuilder UseGrainRegistry(this ISiloBuilder builder, Action<DynamoDBIndexRegistryOptions> configureOptions)
         {
-            return builder.ConfigureServices(
-                services =>
+            return builder.ConfigureServices( services =>
+            {
+                if (configureOptions != null)
                 {
-                    if (configureOptions != null)
-                    {
-                        services.Configure(configureOptions);
-                    }
-                    services.AddSingleton<IIndexRegistry, IndexRegistry>();
-                });
+                    services.Configure(configureOptions);
+                }
+                services.AddSingleton<IIndexRegistry, IndexRegistry>();
+            })
+            .AddStartupTask<InitializeRegistry>();
         }
-
-        public static IHostBuilder UseGrainRegistry(this IHostBuilder builder, Action<OptionsBuilder<DynamoDBIndexRegistryOptions>> configureOptions)
+        public class InitializeRegistry : IStartupTask
         {
-            return builder.ConfigureServices(
-                services =>
-                {
-                    configureOptions?.Invoke(services.AddOptions<DynamoDBIndexRegistryOptions>());
-                    services.AddSingleton<IIndexRegistry, IndexRegistry>();
-                });
+            private readonly IServiceProvider services;
+
+            public InitializeRegistry(IServiceProvider services)
+            {
+                this.services = services;
+            }
+
+            public async Task Execute(CancellationToken cancellationToken)
+            {
+                var registry = this.services.GetRequiredService<IIndexRegistry>();
+                await registry.Initialize();
+            }
         }
     }
 }

@@ -1,0 +1,7 @@
+language: csharp
+mono: none
+dotnet: 2.1.502
+solution: Ms.Orleans.Profile.sln
+script:
+  - dotnet restore
+  - dotnet test
