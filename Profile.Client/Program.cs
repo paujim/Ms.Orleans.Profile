@@ -17,6 +17,8 @@ namespace Profile.Client
         static async Task<int> Main(string[] args)
         {
             Console.Title = "Test Client";
+            System.Threading.Thread.Sleep(2000);
+
             try
             {
                 var siloConfig = new ConfigurationBuilder()
@@ -47,6 +49,7 @@ namespace Profile.Client
                     .ConfigureLogging(logging => logging.AddConsole())
                     .Build();
 
+
                 await client.Connect(CreateRetryFilter());
                 Console.WriteLine("Client successfully connect to silo host");
 
@@ -75,11 +78,11 @@ namespace Profile.Client
                     }
                 });
 
-                var arrayBussiness = await bussinessMgnt.SearchByProperty("9864322148");
+                var arrayBussiness1 = await bussinessMgnt.SearchByProperty("9864322148");
 
                 await bussinessMgnt.Delete(id);
 
-                arrayBussiness = await bussinessMgnt.SearchByProperty("9864322148");
+                var arrayBussiness2 = await bussinessMgnt.SearchByProperty("9864322148");
 
                 Console.ReadKey();
                 return 0;

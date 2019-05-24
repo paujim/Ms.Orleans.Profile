@@ -9,3 +9,5 @@ Profile.Grains/obj/
 Profile.Interface/bin/
 Profile.Interface/obj/
 Profile.Grains/bin/
+Profile.Test/bin/
+Profile.Test/obj/

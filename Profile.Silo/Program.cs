@@ -2,13 +2,11 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Orleans;
 using Orleans.Configuration;
 using Orleans.Hosting;
 using Orleans.Serialization;
 using Profile.Core;
-using Profile.Core.Data;
 using Profile.Grains;
 using System;
 using System.Threading.Tasks;
@@ -75,25 +73,25 @@ namespace Profile.Silo
                     .ConfigureApplicationParts(_ => _.AddApplicationPart(typeof(CustomerGrain).Assembly).WithReferences())
                     .AddMemoryGrainStorageAsDefault()
                     .AddMemoryGrainStorage(OrleansConstants.GrainMemoryStorage)
-                    .UseDashboard( ))
-                    .ConfigureServices(services =>
-                    {
-                        //services.AddHostedService<StocksHostedService>();
-                        //services.Configure<ConsoleLifetimeOptions>(options =>
-                        //{
-                        //    options.SuppressStatusMessages = true;
-                        //});
-                    })
+                    .UseDashboard( )
                     .UseGrainRegistry(options =>
                     {
                         options.AccessKey = siloConfig.AwsAccessKey;
                         options.SecretKey = siloConfig.AwsSecretKey;
                         options.Service = siloConfig.AwsRegion;
-                    })
-                    .ConfigureLogging(builder => builder
-                        .AddFilter("Orleans.Runtime.Management.ManagementGrain", LogLevel.Warning)
-                        .AddFilter("Orleans.Runtime.SiloControl", LogLevel.Warning)
-                        .AddConsole())
+                    }))
+                .ConfigureServices(services =>
+                {
+                    //services.AddHostedService<StocksHostedService>();
+                    //services.Configure<ConsoleLifetimeOptions>(options =>
+                    //{
+                    //    options.SuppressStatusMessages = true;
+                    //});
+                })
+                .ConfigureLogging(builder => builder
+                    .AddFilter("Orleans.Runtime.Management.ManagementGrain", LogLevel.Warning)
+                    .AddFilter("Orleans.Runtime.SiloControl", LogLevel.Warning)
+                    .AddConsole())
                 .RunConsoleAsync();
         }
     }
